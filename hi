@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pointer Lock – Google Sites friendly</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #000;
+      color: #0f0;
+      font-family: Consolas, monospace;
+      overflow: hidden;
+      cursor: none;
+    }
+    #instructions {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0,0,0,0.85);
+      font-size: 1.4rem;
+      pointer-events: none;
+      transition: opacity 0.6s;
+    }
+    #instructions.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #crosshair {
+      position: absolute;
+      inset: 50% 0 0 50%;
+      width: 20px;
+      height: 20px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    #debug {
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      font-size: 13px;
+      color: #0f03;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<div id="instructions">
+  <div>Click anywhere on this box to lock the mouse</div>
+  <div style="margin-top:1.5rem; font-size:1rem; color:#888;">
+    Press ESC to unlock • Works best in full window
+  </div>
+</div>
+
+<div id="crosshair">┼</div>
+
+<div id="debug">waiting for click...</div>
+
+<script>
+// ────────────────────────────────────────────────
+const instructions = document.getElementById('instructions');
+const debug       = document.getElementById('debug');
+const crosshair   = document.getElementById('crosshair');
+
+let isLocked = false;
+
+function updateDebug() {
+  debug.textContent = `locked = ${isLocked}   •   movementX/Y available = ${'movementX' in MouseEvent.prototype}`;
+}
+
+function requestPointerLock() {
+  // Most compatible order in 2025–2026
+  const elem = document.body;
+
+  if (elem.requestPointerLock) {
+    elem.requestPointerLock();
+  } else if (elem.webkitRequestPointerLock) {
+    elem.webkitRequestPointerLock();
+  } else if (elem.mozRequestPointerLock) {
+    elem.mozRequestPointerLock();
+  }
+}
+
+// ─── Events ──────────────────────────────────────
+document.addEventListener('click', (e) => {
+  if (!isLocked) {
+    requestPointerLock();
+  }
+});
+
+document.addEventListener('pointerlockchange', pointerLockChange);
+document.addEventListener('mozpointerlockchange', pointerLockChange);
+document.addEventListener('webkitpointerlockchange', pointerLockChange);
+
+function pointerLockChange() {
+  const locked =
+    document.pointerLockElement === document.body ||
+    document.mozPointerLockElement === document.body ||
+    document.webkitPointerLockElement === document.body;
+
+  isLocked = locked;
+  updateDebug();
+
+  instructions.classList.toggle('hidden', locked);
+  crosshair.style.opacity = locked ? '0.7' : '0.2';
+}
+
+document.addEventListener('mousemove', (e) => {
+  if (!isLocked) return;
+
+  // movementX/Y should appear only when locked
+  const mx = e.movementX || e.mozMovementX || e.webkitMovementX || 0;
+  const my = e.movementY || e.mozMovementY || e.webkitMovementY || 0;
+
+  if (mx !== 0 || my !== 0) {
+    debug.textContent = `dx:\( {mx.toString().padStart(4)}  dy: \){my.toString().padStart(4)}`;
+  }
+});
+
+// Optional: unlock with ESC is automatic, but we can listen
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' || e.key === 'Esc') {
+    // Most browsers exit pointer lock on ESC automatically
+    // but we can force it for safety
+    if (document.exitPointerLock) {
+      document.exitPointerLock();
+    } else if (document.webkitExitPointerLock) {
+      document.webkitExitPointerLock();
+    } else if (document.mozExitPointerLock) {
+      document.mozExitPointerLock();
+    }
+  }
+});
+
+updateDebug();
+</script>
+</body>
+</html>
+
+
+
+
+<!-- Ultimate Game Stash file--> 
+<!-- For the regularly updating doc go to https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/ -->
+
+
+<html>
+<head>
+  <title>EaglercraftX</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* Sayfa ve oyun çerçevesi için temel düzenlemeler */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden; /* Sayfanın gereksiz kaymasını engeller */
+    }
+
+    #game_frame {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #000; /* Arka plan rengi, isteğe bağlı */
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/bubbls/loltheygotbannedfromjsdelivr@38f40924ae70b843f3d4d0a5dc3d6ba13ca3a461/classes.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/bubbls/loltheygotbannedfromjsdelivr@38f40924ae70b843f3d4d0a5dc3d6ba13ca3a461/fix-webm-duration.js"></script>
+  <script type="text/javascript">
+    window.addEventListener('load', function () {
+      window.focus();
+      document.body.addEventListener('click', function (e) {
+        window.focus();
+      }, false);
+    });
+
+    window.addEventListener("load", () => {
+      if (document.location.href.startsWith("file:")) {
+        console.warn("HTTP required. Do not open this file locally, run it via a local HTTP server.");
+      } else {
+        // Default configuration for EaglercraftX
+        if (!window.eaglercraftXOpts) {
+          window.eaglercraftXOpts = {
+            container: "game_frame",
+            assetsURI: "https://cdn.jsdelivr.net/gh/bubbls/loltheygotbannedfromjsdelivr@38f40924ae70b843f3d4d0a5dc3d6ba13ca3a461/assets.epk",
+            localesURI: "lang/",
+            servers: [
+              { addr: "wss://mc.arch.lol/", name: "ArchMC" },
+              { addr: "wss://mc.asspixel.net", name: "AssPixel" },
+              { addr: "wss://sus.shhnowisnottheti.me", name: "Ayunboom" },
+              { addr: "wss://aeon-network.net/1.8", name: "Aeon" },
+              { addr: "wss://zentic.org/", name: "Zentic" }
+            ]
+          };
+        }
+        // Ensure container element exists
+        let container = document.querySelector(`#${window.eaglercraftXOpts.container}`);
+        if (!container) {
+          console.error("Container element not found. Creating a default one.");
+          container = document.createElement("div");
+          container.id = window.eaglercraftXOpts.container;
+          document.body.appendChild(container);
+        }
+        try {
+          main();
+        } catch (error) {
+          console.error("Error starting EaglercraftX:", error);
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <!-- Ensure essential DOM elements exist -->
+  <div id="game_frame"></div>
+  <div class="_eaglercraftX_wrapper_element"></div>
+  <div id="_eaglercraftX_crashReason" style="display:none;"></div>
+  <div id="_eaglercraftX_crashUserAgent" style="display:none;"></div>
+</body>
+</html>
